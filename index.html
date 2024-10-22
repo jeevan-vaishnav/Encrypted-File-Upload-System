@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #status {
+      margin-top: 10px;
+      color: green;
+    }
+
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Upload a File</h1>
+
+    <form id="uploadForm" enctype="multipart/form-data">
+      <input type="file" id="fileInput" name="file" required />
+      <button type="submit">Upload</button>
+    </form>
+
+    <p id="status"></p>
+  </div>
+
+  <script>
+    // JavaScript to handle the file upload
+    const form = document.getElementById('uploadForm');
+    const fileInput = document.getElementById('fileInput');
+    const status = document.getElementById('status');
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault(); // Prevent the form from submitting the normal way
+
+      // Ensure a file is selected
+      if (fileInput.files.length === 0) {
+        status.textContent = 'Please select a file.';
+        status.classList.add('error');
+        return;
+      }
+
+      const file = fileInput.files[0]; // Get the selected file
+      const formData = new FormData(); // Create a FormData object
+      formData.append('file', file); // Append the file to the FormData object
+
+      console.log(`Form Data ${formData}`)
+
+      // Send the file to the server via fetch
+      fetch('http://localhost:3000/upload', {
+        method: 'POST',
+        body: formData, // Send the FormData object
+      })
+      .then(response => {
+        response.text()
+        console.log(response)
+    }
+    )
+      .then(result => {
+        console.log(result);
+        status.textContent = 'Upload successful!';
+        status.classList.remove('error');
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        status.textContent = 'Upload failed.';
+        status.classList.add('error');
+      });
+    });
+  </script>
+
+</body>
+</html>
